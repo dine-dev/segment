@@ -65,6 +65,16 @@ void QuranImagePage::showContours()
         }
     }
 
+    // sourate basmala
+    std::vector<cv::Rect> basmala_panels;
+    if (hasBasmala(basmala_panels))
+    {
+        for (size_t ind = 0; ind < basmala_panels.size(); ++ind)
+        {
+            cv::rectangle(src, basmala_panels[ind], cv::Scalar(0, 255, 0), 3);
+        }
+    }
+
     cv::imshow("Display page " + std::to_string(_number), src);
     cv::moveWindow("Display page " + std::to_string(_number), 600, 20);
     cv::waitKey(0);
@@ -131,6 +141,11 @@ bool QuranImagePage::hasBasmala(std::vector<cv::Rect> &bounding_rects)
     bool hasBasmala = pagesWithBasmala.count(_number);
     if (hasBasmala)
     {
+        // Determine image template to use
+        std::string template_dir = "../../application/template_matching_ressources/";
+        std::string template_file_name = (_number == 2) ? "basmalah_second_page.jpg" : "basmalah.jpg";
+        template_file_name = template_dir + template_file_name;
+        matchSeveral(bounding_rects, template_file_name, 0.55);
     }
     return hasBasmala;
 }
