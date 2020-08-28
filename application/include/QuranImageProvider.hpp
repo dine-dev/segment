@@ -2,9 +2,8 @@
 #define QURAN_IMAGE_PROVIDER_H
 
 #include <iostream>
-#include <sys/stat.h>
-#include <sys/types.h>
 
+#include "FileSystemUtilities.hpp"
 #include "HttpDownloader.hpp"
 
 class QuranImageProvider
@@ -18,10 +17,6 @@ public:
     ~QuranImageProvider();
     std::string getQuranImagePath(int pageNumber);
     void fetchAllQuranImage();
-
-private:
-    int dirExists(const std::string &path);
-    int fileExists(const std::string &path);
 };
 
 #endif

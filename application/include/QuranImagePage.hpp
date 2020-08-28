@@ -31,7 +31,7 @@ public:
     bool hasRoubou3(cv::Rect &bounding_rect);
     
 private:
-    bool matchOne(cv::Rect &bounding_rect, std::string template_file_name, int match_method = cv::TM_CCOEFF_NORMED);
+    bool matchOne(cv::Rect &bounding_rect, std::string template_file_name, double threshold = 0.8, int match_method = cv::TM_CCOEFF_NORMED);
     bool matchSeveral(std::vector<cv::Rect> &bounding_rects, std::string template_file_name, double threshold = 0.8, int match_method = cv::TM_CCOEFF_NORMED);
 
 };

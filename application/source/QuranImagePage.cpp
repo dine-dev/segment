@@ -33,7 +33,8 @@ bool comp(const std::vector<cv::Point> &contour_lhs, const std::vector<cv::Point
     return (cv::contourArea(contour_lhs) > cv::contourArea(contour_rhs));
 }
 
-bool rectangleHasIntersection (const cv::Rect & rect_lhs, const cv::Rect & rect_rhs) {
+bool rectangleHasIntersection(const cv::Rect &rect_lhs, const cv::Rect &rect_rhs)
+{
     return ((rect_lhs & rect_rhs).area() > 0);
 }
 
@@ -108,7 +109,7 @@ bool QuranImagePage::hasTextArea(cv::Rect &bounding_rect)
     // text area is the second highest area coutours
     bounding_rect = cv::boundingRect((contours[1]));
 
-    // require additional processing for first two pages because tajweed panel include in text panel
+    // require additional processing for first two pages because tajweed panel includes in text panel
     if (_number < 3)
     {
         cv::Rect tajweed_panel;
@@ -145,7 +146,7 @@ bool QuranImagePage::hasBasmala(std::vector<cv::Rect> &bounding_rects)
         std::string template_dir = "../../application/template_matching_ressources/";
         std::string template_file_name = (_number == 2) ? "basmalah_second_page.jpg" : "basmalah.jpg";
         template_file_name = template_dir + template_file_name;
-        matchSeveral(bounding_rects, template_file_name, 0.55);
+        matchSeveral(bounding_rects, template_file_name, 0.3);
     }
     return hasBasmala;
 }
@@ -170,46 +171,68 @@ bool QuranImagePage::hasRoubou3(cv::Rect &bounding_rect)
     return false;
 }
 
-bool QuranImagePage::matchOne(cv::Rect &bounding_rect, std::string template_file_name, int match_method)
+bool QuranImagePage::matchOne(cv::Rect &bounding_rect, std::string template_file_name, double threshold, int match_method)
 {
+    cv::Mat3b ref = cv::imread(_fileName, cv::IMREAD_COLOR);
+    cv::Mat3b tpl = cv::imread(template_file_name, cv::IMREAD_COLOR);
+
+    cv::Mat gref, gtpl;
+    cv::cvtColor(ref, gref, cv::COLOR_BGR2GRAY);
+    cv::cvtColor(tpl, gtpl, cv::COLOR_BGR2GRAY);
+    cv::Mat res(ref.rows - tpl.rows + 1, ref.cols - tpl.cols + 1, CV_32FC1);
+    cv::matchTemplate(gref, gtpl, res, match_method);
+    cv::threshold(res, res, threshold, 1., cv::THRESH_TOZERO);
+
+    double minval, maxval;
+    cv::Point minloc, maxloc;
+    cv::minMaxLoc(res, &minval, &maxval, &minloc, &maxloc);
+
+    if (maxval >= threshold)
+    {
+        // build bounding rectangle
+        bounding_rect = cv::Rect(maxloc, cv::Point(maxloc.x + tpl.cols, maxloc.y + tpl.rows));
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+
+    // // Source image to display
     // "Method: \n 0: SQDIFF \n 1: SQDIFF NORMED \n 2: TM CCORR \n 3: TM CCORR NORMED \n 4: TM COEFF \n 5: TM COEFF NORMED";
+    // cv::Mat img = cv::imread(_fileName, cv::IMREAD_COLOR);
+    // cv::Mat templ = cv::imread(template_file_name, cv::IMREAD_COLOR);
+    // cv::Mat img_display;
+    // img.copyTo(img_display);
 
-    cv::Mat img = cv::imread(_fileName, cv::IMREAD_COLOR);
-    cv::Mat templ = cv::imread(template_file_name, cv::IMREAD_COLOR);
+    // // Create the result matrix
+    // int result_cols = img.cols - templ.cols + 1;
+    // int result_rows = img.rows - templ.rows + 1;
 
-    // Source image to display
-    cv::Mat img_display;
-    img.copyTo(img_display);
+    // cv::Mat result;
+    // result.create(result_rows, result_cols, CV_32FC1);
 
-    // Create the result matrix
-    int result_cols = img.cols - templ.cols + 1;
-    int result_rows = img.rows - templ.rows + 1;
+    // // Do the Matching and Normalize
+    // cv::matchTemplate(img, templ, result, match_method);
+    // cv::normalize(result, result, 0, 1, cv::NORM_MINMAX, -1, cv::Mat());
 
-    cv::Mat result;
-    result.create(result_rows, result_cols, CV_32FC1);
+    // // Localizing the best match with minMaxLoc
+    // double minVal, maxVal;
+    // cv::Point minLoc, maxLoc, matchLoc;
 
-    // Do the Matching and Normalize
-    cv::matchTemplate(img, templ, result, match_method);
-    cv::normalize(result, result, 0, 1, cv::NORM_MINMAX, -1, cv::Mat());
+    // cv::minMaxLoc(result, &minVal, &maxVal, &minLoc, &maxLoc, cv::Mat());
 
-    // Localizing the best match with minMaxLoc
-    double minVal, maxVal;
-    cv::Point minLoc, maxLoc, matchLoc;
+    // // For SQDIFF and SQDIFF_NORMED, the best matches are lower values. For all the other methods, the higher the better
+    // matchLoc = (match_method == cv::TM_SQDIFF || match_method == cv::TM_SQDIFF_NORMED) ? minLoc : maxLoc;
 
-    cv::minMaxLoc(result, &minVal, &maxVal, &minLoc, &maxLoc, cv::Mat());
+    // // return tajweed footer area rectangle
+    // bounding_rect = cv::Rect(matchLoc, cv::Point(matchLoc.x + templ.cols, matchLoc.y + templ.rows));
 
-    // For SQDIFF and SQDIFF_NORMED, the best matches are lower values. For all the other methods, the higher the better
-    matchLoc = (match_method == cv::TM_SQDIFF || match_method == cv::TM_SQDIFF_NORMED) ? minLoc : maxLoc;
-
-    // return tajweed footer area rectangle
-    bounding_rect = cv::Rect(matchLoc, cv::Point(matchLoc.x + templ.cols, matchLoc.y + templ.rows));
-
-    return true;
+    // return true;
 }
 
 bool QuranImagePage::matchSeveral(std::vector<cv::Rect> &bounding_rects, std::string template_file_name, double threshold, int match_method)
 {
-
     bounding_rects.clear();
     cv::Mat3b ref = cv::imread(_fileName, cv::IMREAD_COLOR);
     cv::Mat3b tpl = cv::imread(template_file_name, cv::IMREAD_COLOR);
@@ -217,11 +240,11 @@ bool QuranImagePage::matchSeveral(std::vector<cv::Rect> &bounding_rects, std::st
     cv::Mat gref, gtpl;
     cv::cvtColor(ref, gref, cv::COLOR_BGR2GRAY);
     cv::cvtColor(tpl, gtpl, cv::COLOR_BGR2GRAY);
-    cv::Mat res(ref.rows-tpl.rows+1, ref.cols-tpl.cols+1, CV_32FC1);
+    cv::Mat res(ref.rows - tpl.rows + 1, ref.cols - tpl.cols + 1, CV_32FC1);
     cv::matchTemplate(gref, gtpl, res, match_method);
     cv::threshold(res, res, threshold, 1., cv::THRESH_TOZERO);
 
-    while (true) 
+    while (true)
     {
         double minval, maxval;
         cv::Point minloc, maxloc;
@@ -231,19 +254,21 @@ bool QuranImagePage::matchSeveral(std::vector<cv::Rect> &bounding_rects, std::st
         {
             // build bounding rectangle
             cv::Rect bounding_rect(maxloc, cv::Point(maxloc.x + tpl.cols, maxloc.y + tpl.rows));
-            
+
             // add to vector only if has no intersection with previous added
             std::vector<cv::Rect>::iterator it = std::find_if(bounding_rects.begin(), bounding_rects.end(),
-                                                              [=] (const cv::Rect & rect) { return rectangleHasIntersection(bounding_rect,rect); } );
+                                                              [=](const cv::Rect &rect) { return rectangleHasIntersection(bounding_rect, rect); });
 
             // if retangle has no intersection with existing rectangles in vector then add to vector
-            if (it == bounding_rects.end()) {
+            if (it == bounding_rects.end())
+            {
                 bounding_rects.push_back(bounding_rect);
             }
-            else {
+            else
+            {
                 (*it) = (*it) | bounding_rect;
             }
-            
+
             // post processing
             cv::floodFill(res, maxloc, cv::Scalar(0), 0, cv::Scalar(.1), cv::Scalar(1.));
         }
@@ -252,6 +277,6 @@ bool QuranImagePage::matchSeveral(std::vector<cv::Rect> &bounding_rects, std::st
             break;
         }
     }
-    
+
     return true;
 }
