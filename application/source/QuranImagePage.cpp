@@ -21,7 +21,6 @@ void QuranImagePage::showImagePage()
         std::cout << "Could not open or find the image" << std::endl;
         return;
     }
-
     cv::namedWindow("Display " + _fileName, cv::WINDOW_AUTOSIZE);
     cv::imshow("Display " + _fileName, image);
 
@@ -46,14 +45,14 @@ void QuranImagePage::showContours()
     cv::Rect text_panel;
     if (hasTextArea(text_panel))
     {
-        cv::rectangle(src, text_panel, cv::Scalar(0, 255, 0), 3);
+        cv::rectangle(src, text_panel, cv::Scalar(255, 0, 0), 3);
     }
 
     // tajweed footer
     cv::Rect tajweed_panel;
     if (hasTajweedFooter(tajweed_panel))
     {
-        cv::rectangle(src, tajweed_panel, cv::Scalar(0, 255, 0), 3);
+        cv::rectangle(src, tajweed_panel, cv::Scalar(255, 0, 0), 3);
     }
 
     // sourate header
@@ -62,18 +61,32 @@ void QuranImagePage::showContours()
     {
         for (size_t ind = 0; ind < sourate_header_panels.size(); ++ind)
         {
-            cv::rectangle(src, sourate_header_panels[ind], cv::Scalar(0, 255, 0), 3);
+            cv::rectangle(src, sourate_header_panels[ind], cv::Scalar(255, 0, 0), 3);
         }
     }
 
-    // sourate basmala
+    // basmala
     std::vector<cv::Rect> basmala_panels;
     if (hasBasmala(basmala_panels))
     {
         for (size_t ind = 0; ind < basmala_panels.size(); ++ind)
         {
-            cv::rectangle(src, basmala_panels[ind], cv::Scalar(0, 255, 0), 3);
+            cv::rectangle(src, basmala_panels[ind], cv::Scalar(255, 0, 0), 3);
         }
+    }
+
+    // soujoud
+    cv::Rect soujoud_panel;
+    if (hasSoujoud(soujoud_panel))
+    {
+        cv::rectangle(src, soujoud_panel, cv::Scalar(255, 0, 0), 3);
+    }
+
+    // roukou3
+    cv::Rect roubou3_panel;
+    if (hasRoubou3(roubou3_panel))
+    {
+        cv::rectangle(src, roubou3_panel, cv::Scalar(255, 0, 0), 3);
     }
 
     cv::imshow("Display page " + std::to_string(_number), src);
@@ -163,12 +176,32 @@ bool QuranImagePage::hasTajweedFooter(cv::Rect &bounding_rect)
 
 bool QuranImagePage::hasSoujoud(cv::Rect &bounding_rect)
 {
-    return false;
+    bool hasSoujoud = pagesWithSoujoud.count(_number);
+    if (hasSoujoud)
+    {
+        // Determine image template to use
+        std::string template_dir = "../../application/template_matching_ressources/";
+        std::string template_file_name = "soujoud.jpg";
+        template_file_name = template_dir + template_file_name;
+
+        return matchOne(bounding_rect, template_file_name);
+    }
+    return hasSoujoud;
 }
 
 bool QuranImagePage::hasRoubou3(cv::Rect &bounding_rect)
 {
-    return false;
+    bool hasRoubou3 = pagesWithRoubou3.count(_number);
+    if (hasRoubou3)
+    {
+        // Determine image template to use
+        std::string template_dir = "../../application/template_matching_ressources/";
+        std::string template_file_name = "roubou3.jpg";
+        template_file_name = template_dir + template_file_name;
+
+        return matchOne(bounding_rect, template_file_name);
+    }
+    return hasRoubou3;
 }
 
 bool QuranImagePage::matchOne(cv::Rect &bounding_rect, std::string template_file_name, double threshold, int match_method)
