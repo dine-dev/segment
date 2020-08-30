@@ -89,6 +89,16 @@ void QuranImagePage::showContours()
         cv::rectangle(src, roubou3_panel, cv::Scalar(255, 0, 0), 3);
     }
 
+    // ayahs
+    std::vector<cv::Rect> ayah_panel;
+    if (hasAyah(ayah_panel))
+    {
+        for (size_t ind = 0; ind < ayah_panel.size(); ++ind)
+        {
+            cv::rectangle(src, ayah_panel[ind], cv::Scalar(255, 0, 0), 3);
+        }
+    }
+
     cv::imshow("Display page " + std::to_string(_number), src);
     cv::moveWindow("Display page " + std::to_string(_number), 600, 20);
     cv::waitKey(0);
@@ -191,7 +201,7 @@ bool QuranImagePage::hasSoujoud(cv::Rect &bounding_rect)
 
 bool QuranImagePage::hasRoubou3(cv::Rect &bounding_rect)
 {
-    bool hasRoubou3 = pagesWithRoubou3.count(_number);
+    bool hasRoubou3 = pagesWithRoubou3.count(_number) && pagesWithRoubou3.at(_number);
     if (hasRoubou3)
     {
         // Determine image template to use
@@ -199,9 +209,37 @@ bool QuranImagePage::hasRoubou3(cv::Rect &bounding_rect)
         std::string template_file_name = "roubou3.jpg";
         template_file_name = template_dir + template_file_name;
 
-        return matchOne(bounding_rect, template_file_name);
+        return matchOne(bounding_rect, template_file_name, 0.3);
     }
     return hasRoubou3;
+}
+
+bool QuranImagePage::hasAyah(std::vector<cv::Rect> &bounding_rects)
+{
+    std::string template_dir = "../../application/template_matching_ressources/";
+    std::string template_file_name = (_number == 1) ? "ayah_symbol_first_page.jpg" : ((_number == 2) ? "ayah_symbol_second_page.jpg" : "ayah_symbol.jpg");
+    template_file_name = template_dir + template_file_name;
+
+    // perform ayah symbol detection
+    matchSeveral(bounding_rects, template_file_name, 0.4);
+
+    // check if number of ayah symbol match number of ayah
+    int number_of_ayah = pagesAyahNumber.at(_number);
+    if (bounding_rects.size() < number_of_ayah)
+    {
+        // test other ayah symbols
+        std::vector<std::string> template_file_names {
+            "ayah_symbol_1.jpg",
+            "ayah_symbol_2.jpg"
+        };
+
+        for (size_t ind = 0; ind < template_file_names.size(); ++ind)
+        {
+            matchSeveral(bounding_rects, template_dir + template_file_names[ind], 0.4);
+        }
+    }
+    std::cout << "{" << _number << "," << bounding_rects.size() << "}" << std::endl;
+    return true;
 }
 
 bool QuranImagePage::matchOne(cv::Rect &bounding_rect, std::string template_file_name, double threshold, int match_method)
@@ -266,7 +304,6 @@ bool QuranImagePage::matchOne(cv::Rect &bounding_rect, std::string template_file
 
 bool QuranImagePage::matchSeveral(std::vector<cv::Rect> &bounding_rects, std::string template_file_name, double threshold, int match_method)
 {
-    bounding_rects.clear();
     cv::Mat3b ref = cv::imread(_fileName, cv::IMREAD_COLOR);
     cv::Mat3b tpl = cv::imread(template_file_name, cv::IMREAD_COLOR);
 
