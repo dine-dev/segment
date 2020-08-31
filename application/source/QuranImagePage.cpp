@@ -238,7 +238,7 @@ bool QuranImagePage::hasAyah(std::vector<cv::Rect> &bounding_rects)
             matchSeveral(bounding_rects, template_dir + template_file_names[ind], 0.4);
         }
     }
-    std::cout << "{" << _number << "," << bounding_rects.size() << "}" << std::endl;
+    std::cout << " {" << _number << "," << bounding_rects.size() << "}," ;
     return true;
 }
 
