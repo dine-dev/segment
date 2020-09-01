@@ -230,7 +230,8 @@ bool QuranImagePage::hasAyah(std::vector<cv::Rect> &bounding_rects)
         // test other ayah symbols
         std::vector<std::string> template_file_names {
             "ayah_symbol_1.jpg",
-            "ayah_symbol_2.jpg"
+            "ayah_symbol_2.jpg",
+            "ayah_symbol_3.jpg"
         };
 
         for (size_t ind = 0; ind < template_file_names.size(); ++ind)
@@ -238,7 +239,7 @@ bool QuranImagePage::hasAyah(std::vector<cv::Rect> &bounding_rects)
             matchSeveral(bounding_rects, template_dir + template_file_names[ind], 0.4);
         }
     }
-    std::cout << " {" << _number << "," << bounding_rects.size() << "}," ;
+
     return true;
 }
 

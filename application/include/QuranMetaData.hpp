@@ -152,5 +152,127 @@ const std::map<int, int> pagesAyahNumber{
     {601,17}, {602,14}, {603,14}, {604,15}
 };
 
+/*
+|-------------+---------------+-------------------------------------------------+------|
+| Chapter No. | Surah Name    | Accepted Variant Names                          | Ayat |
+|-------------+---------------+-------------------------------------------------+------|
+|           1 | al-Fatihah    | al-Fatiha                                       |    7 |
+|           2 | al-Baqarah    | al-Baqara                                       |  286 |
+|           3 | al-Imran      |                                                 |  200 |
+|           4 | an-Nisa'      | an-Nisa, al-Nisa                                |  176 |
+|           5 | al-Ma'idah    | al-Ma'idah, al-Maidah, al-Maida                 |  120 |
+|           6 | al-An`am      | al-Anam, al-Anaam, al-Annam                     |  165 |
+|           7 | al-A`raf      | al-Araf                                         |  206 |
+|           8 | al-Anfal      |                                                 |   75 |
+|           9 | at-Taubah     | at-Tauba, Baraa'                                |  129 |
+|          10 | Yunus         |                                                 |  109 |
+|          11 | Hud           |                                                 |  123 |
+|          12 | Yusuf         |                                                 |  111 |
+|          13 | ar-Ra`d       | ar-Rad                                          |   43 |
+|          14 | Ibrahim       |                                                 |   52 |
+|          15 | al-Hijr       |                                                 |   99 |
+|          16 | an-Nahl       |                                                 |  128 |
+|          17 | al-Isra'      | al-Isra, Bani Isra'il, Bani Israil              |  111 |
+|          18 | al-Kahf       |                                                 |  110 |
+|          19 | Maryam        |                                                 |   98 |
+|          20 | Ta Ha         | Ta-Ha                                           |  135 |
+|          21 | al-Anbiya'    | al-Anbiya                                       |  112 |
+|          22 | al-Hajj       |                                                 |   78 |
+|          23 | al-Mu'minun   | al-Muminun, al-Mumenoon                         |  118 |
+|          24 | an-Nur        | an-Noor                                         |   64 |
+|          25 | al-Furqan     |                                                 |   77 |
+|          26 | ash-Shu`ara'  | ash-Shuara                                      |  227 |
+|          27 | an-Naml       |                                                 |   93 |
+|          28 | al-Qasas      |                                                 |   88 |
+|          29 | al-`Ankabut   | al-Ankabut, al-Ankaboott                        |   69 |
+|          30 | ar-Rum        | ar-Rum, ar-Room                                 |   60 |
+|          31 | Luqman        | Lukman                                          |   34 |
+|          32 | as-Sajdah     | as-Sajda, al-Mala'ikah, al-Malaikah, al-Malaika |   30 |
+|          33 | al-Ahzab      |                                                 |   73 |
+|          34 | Saba'         | Saba                                            |   54 |
+|          35 | Fatir         | al-Fatir                                        |   45 |
+|          36 | Ya Sin        | Ya Seen                                         |   83 |
+|          37 | as-Saffat     | as-Saaffat, al-Saffat                           |  182 |
+|          38 | Sad           |                                                 |   88 |
+|          39 | az-Zumar      |                                                 |   75 |
+|          40 | Ghafir        |                                                 |   85 |
+|          41 | Fussilat      | Ha Mim Sajdah, Ha Mim Sajda                     |   54 |
+|          42 | ash-Shura     |                                                 |   53 |
+|          43 | az-Zukhruf    | al-Zukhruf                                      |   89 |
+|          44 | ad-Dukhan     | al-Dukhan                                       |   59 |
+|          45 | al-Jathiyah   | al-Jathiya                                      |   37 |
+|          46 | al-Ahqaf      |                                                 |   35 |
+|          47 | Muhammad      | al-Qital                                        |   38 |
+|          48 | al-Fath       |                                                 |   29 |
+|          49 | al-Hujurat    | al-Hujraat                                      |   18 |
+|          50 | Qaf           |                                                 |   45 |
+|          51 | adh-Dhariyat  | al-Dhariyat, az-Zariyat                         |   60 |
+|          52 | at-Tur        | al-Tur                                          |   49 |
+|          53 | an-Najm       | al-Najm                                         |   62 |
+|          54 | al-Qamar      |                                                 |   55 |
+|          55 | ar-Rahman     |                                                 |   78 |
+|          56 | al-Waqi`ah    | al-Waqiah, al-Waqia                             |   96 |
+|          57 | al-Hadid      |                                                 |   29 |
+|          58 | al-Mujadilah  | al-Mujadila                                     |   22 |
+|          59 | al-Hashr      |                                                 |   24 |
+|          60 | al-Mumtahinah | al-Mumtahina, al-Mumtahanah                     |   13 |
+|          61 | as-Saff       |                                                 |   14 |
+|          62 | al-Jumu`ah    | al-Jumua, al-Jum`ah, al-Jumuah                  |   11 |
+|          63 | al-Munafiqun  | al-Munafiqoon                                   |   11 |
+|          64 | at-Taghabun   |                                                 |   18 |
+|          65 | at-Talaq      |                                                 |   12 |
+|          66 | at-Tahrim     |                                                 |   12 |
+|          67 | al-Mulk       |                                                 |   30 |
+|          68 | al-Qalam      |                                                 |   52 |
+|          69 | al-Haqqah     | al-Haqqa                                        |   52 |
+|          70 | al-Ma`arij    | al-Maarij                                       |   44 |
+|          71 | Nuh           | Nooh                                            |   28 |
+|          72 | al-Jinn       |                                                 |   28 |
+|          73 | al-Muzammil   |                                                 |   20 |
+|          74 | al-Mudathir   | al-Muddaththir                                  |   56 |
+|          75 | al-Qiyamah    | al-Qiyama                                       |   40 |
+|          76 | al-Insan      | ad-Dahr                                         |   31 |
+|          77 | al-Mursalat   |                                                 |   50 |
+|          78 | an-Naba'      | an-Naba                                         |   40 |
+|          79 | an-Nazi'at    | an-Nazi'at, an-Naziat, al-Naziat                |   46 |
+|          80 | `Abasa        | Abasa                                           |   42 |
+|          81 | at-Takwir     |                                                 |   29 |
+|          82 | al-Infitar    |                                                 |   19 |
+|          83 | al-Mutaffifin | at-Tatfif                                       |   36 |
+|          84 | al-Inshiqaq   |                                                 |   25 |
+|          85 | al-Buruj      | al-Burooj                                       |   22 |
+|          86 | at-Tariq      | al-Tariq                                        |   17 |
+|          87 | al-A`la       | al-Ala                                          |   19 |
+|          88 | al-Ghashiyah  | al-Ghashiya                                     |   26 |
+|          89 | al-Fajr       |                                                 |   30 |
+|          90 | al-Balad      |                                                 |   20 |
+|          91 | ash-Shams     | al-Shams                                        |   15 |
+|          92 | al-Layl       | al-Lail                                         |   21 |
+|          93 | ad-Dhuha      | ad-Duha, al-Duha                                |   11 |
+|          94 | al-Inshirah   | al-Inshira, ash-Sharh                           |    8 |
+|          95 | at-Tin        | al-Tin                                          |    8 |
+|          96 | al-`Alaq      | al-Alaq                                         |   19 |
+|          97 | al-Qadr       |                                                 |    5 |
+|          98 | al-Baiyinah   | al-Baiyina, al-Bayyinah                         |    8 |
+|          99 | az-Zalzalah   | al-Zilzal                                       |    8 |
+|         100 | al-`Adiyat    | al-Adiyat                                       |   11 |
+|         101 | al-Qari`ah    | al-Qariah, al-Qaria                             |   11 |
+|         102 | at-Takathur   |                                                 |    8 |
+|         103 | al-`Asr       | al-Asr                                          |    3 |
+|         104 | al-Humazah    | al-Humaza                                       |    9 |
+|         105 | al-Fil        |                                                 |    5 |
+|         106 | Quraysh       | Qurayish, al-Quraysh                            |    4 |
+|         107 | al-Ma'un      | al-Ma`un, al-Maun                               |    7 |
+|         108 | al-Kauthar    | al-Kauther                                      |    3 |
+|         109 | al-Kafirun    | al-Kafiroon                                     |    6 |
+|         110 | an-Nasr       |                                                 |    3 |
+|         111 | al-Masad      | al-Masadd, al-Lahab                             |    5 |
+|         112 | al-Ikhlas     | at-Tauhid, at-Tawhid                            |    4 |
+|         113 | al-Falaq      |                                                 |    5 |
+|         114 | an-Nas        |                                                 |    6 |
+|-------------+---------------+-------------------------------------------------+------|
+|             |               |                                                 | 6236 |
+|-------------+---------------+-------------------------------------------------+------|
+*/
 
 #endif
