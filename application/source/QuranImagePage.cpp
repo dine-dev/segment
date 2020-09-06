@@ -152,7 +152,7 @@ bool QuranImagePage::hasSourateHeader(std::vector<cv::Rect> &bounding_rects)
     if (hasHeader)
     {
         // Determine image template to use
-        std::string template_dir = "../../application/template_matching_ressources/";
+        std::string template_dir = "../../application/templates/";
         std::string template_file_name = (_number < 3) ? "header_first_second_page.jpg" : "header.jpg";
         template_file_name = template_dir + template_file_name;
         matchSeveral(bounding_rects, template_file_name, 0.7);
@@ -166,7 +166,7 @@ bool QuranImagePage::hasBasmala(std::vector<cv::Rect> &bounding_rects)
     if (hasBasmala)
     {
         // Determine image template to use
-        std::string template_dir = "../../application/template_matching_ressources/";
+        std::string template_dir = "../../application/templates/";
         std::string template_file_name = (_number == 2) ? "basmalah_second_page.jpg" : "basmalah.jpg";
         template_file_name = template_dir + template_file_name;
         matchSeveral(bounding_rects, template_file_name, 0.3);
@@ -177,7 +177,7 @@ bool QuranImagePage::hasBasmala(std::vector<cv::Rect> &bounding_rects)
 bool QuranImagePage::hasTajweedFooter(cv::Rect &bounding_rect)
 {
     // Determine image template to use
-    std::string template_dir = "../../application/template_matching_ressources/";
+    std::string template_dir = "../../application/templates/";
     std::string template_file_name = (_number == 1) ? "footer_first_page.jpg" : ((_number == 2) ? "footer_second_page.jpg" : "footer.jpg");
     template_file_name = template_dir + template_file_name;
 
@@ -190,7 +190,7 @@ bool QuranImagePage::hasSoujoud(cv::Rect &bounding_rect)
     if (hasSoujoud)
     {
         // Determine image template to use
-        std::string template_dir = "../../application/template_matching_ressources/";
+        std::string template_dir = "../../application/templates/";
         std::string template_file_name = "soujoud.jpg";
         template_file_name = template_dir + template_file_name;
 
@@ -205,7 +205,7 @@ bool QuranImagePage::hasRoubou3(cv::Rect &bounding_rect)
     if (hasRoubou3)
     {
         // Determine image template to use
-        std::string template_dir = "../../application/template_matching_ressources/";
+        std::string template_dir = "../../application/templates/";
         std::string template_file_name = "roubou3.jpg";
         template_file_name = template_dir + template_file_name;
 
@@ -216,7 +216,7 @@ bool QuranImagePage::hasRoubou3(cv::Rect &bounding_rect)
 
 bool QuranImagePage::hasAyah(std::vector<cv::Rect> &bounding_rects)
 {
-    std::string template_dir = "../../application/template_matching_ressources/";
+    std::string template_dir = "../../application/templates/";
     std::string template_file_name = (_number == 1) ? "ayah_symbol_first_page.jpg" : ((_number == 2) ? "ayah_symbol_second_page.jpg" : "ayah_symbol.jpg");
     template_file_name = template_dir + template_file_name;
 
@@ -270,37 +270,6 @@ bool QuranImagePage::matchOne(cv::Rect &bounding_rect, std::string template_file
         return false;
     }
 
-    // // Source image to display
-    // "Method: \n 0: SQDIFF \n 1: SQDIFF NORMED \n 2: TM CCORR \n 3: TM CCORR NORMED \n 4: TM COEFF \n 5: TM COEFF NORMED";
-    // cv::Mat img = cv::imread(_fileName, cv::IMREAD_COLOR);
-    // cv::Mat templ = cv::imread(template_file_name, cv::IMREAD_COLOR);
-    // cv::Mat img_display;
-    // img.copyTo(img_display);
-
-    // // Create the result matrix
-    // int result_cols = img.cols - templ.cols + 1;
-    // int result_rows = img.rows - templ.rows + 1;
-
-    // cv::Mat result;
-    // result.create(result_rows, result_cols, CV_32FC1);
-
-    // // Do the Matching and Normalize
-    // cv::matchTemplate(img, templ, result, match_method);
-    // cv::normalize(result, result, 0, 1, cv::NORM_MINMAX, -1, cv::Mat());
-
-    // // Localizing the best match with minMaxLoc
-    // double minVal, maxVal;
-    // cv::Point minLoc, maxLoc, matchLoc;
-
-    // cv::minMaxLoc(result, &minVal, &maxVal, &minLoc, &maxLoc, cv::Mat());
-
-    // // For SQDIFF and SQDIFF_NORMED, the best matches are lower values. For all the other methods, the higher the better
-    // matchLoc = (match_method == cv::TM_SQDIFF || match_method == cv::TM_SQDIFF_NORMED) ? minLoc : maxLoc;
-
-    // // return tajweed footer area rectangle
-    // bounding_rect = cv::Rect(matchLoc, cv::Point(matchLoc.x + templ.cols, matchLoc.y + templ.rows));
-
-    // return true;
 }
 
 bool QuranImagePage::matchSeveral(std::vector<cv::Rect> &bounding_rects, std::string template_file_name, double threshold, int match_method)
@@ -351,3 +320,122 @@ bool QuranImagePage::matchSeveral(std::vector<cv::Rect> &bounding_rects, std::st
 
     return true;
 }
+
+bool QuranImagePage::segmentWordInPage() {}
+
+/*
+
+void ImageAnalyzer::segmentWordInPolygon(const std::string & pathImageQuranPage, const std::vector<cv::Point> & polygon) {
+    cv::Mat3b img = cv::imread(pathImageQuranPage, cv::IMREAD_COLOR), img_disp = img.clone();
+    //cv::rectangle(img_disp, cv::Point(481,83), cv::Point(523,137), cv::Scalar( 255, 0, 0 ), 1);
+    //cv::rectangle(img_disp, cv::Point(18,23), cv::Point(623,80), cv::Scalar( 255, 0, 0 ), 1);
+
+    cv::Mat mask = cv::Mat::zeros(img.rows, img.cols, CV_8UC1);
+    std::vector<cv::Point> pts = {
+        cv::Point(18, 23),
+        cv::Point(623, 23),
+        cv::Point(623, 137),
+        cv::Point(523, 137),
+        cv::Point(523, 80),
+        cv::Point(18, 80)
+    };
+
+    cv::fillConvexPoly( mask, pts.data(), pts.size(), cv::Scalar(255) );
+    
+    cv::Mat imageDest = cv::Mat::zeros(img.rows, img.cols, CV_8UC3);
+    imageDest.setTo(cv::Scalar(255,255,255));
+    img.copyTo(imageDest, mask);
+    
+    //cv::imshow("mask",mask);
+    //cv::imshow("imageDest",imageDest);
+
+    cv::Mat src_gray_thr;
+    cv::cvtColor(imageDest, src_gray_thr, cv::COLOR_BGR2GRAY);
+
+    cv::threshold( src_gray_thr, src_gray_thr, 240, 255, cv::THRESH_BINARY);
+    
+    // invert black and white
+    cv::bitwise_not ( src_gray_thr, src_gray_thr );
+    
+
+    cv::Mat kernel = (cv::Mat_<uchar>(9,9) << 0,0,0,0,1,0,0,0,0,
+                                              0,0,1,1,1,0,0,0,0,
+                                              0,0,0,1,1,0,0,0,0,
+                                              0,0,0,0,1,0,0,0,0,
+                                              0,0,1,1,1,1,1,0,0,
+                                              0,0,0,0,1,0,0,0,0,
+                                              0,0,0,0,1,0,0,0,0,
+                                              0,0,0,0,1,0,0,0,0,
+                                              0,0,0,0,1,0,0,0,0);
+
+    cv::Mat dilation_dst;
+    cv::dilate( src_gray_thr, dilation_dst, kernel);
+
+    std::vector<std::vector<cv::Point> > contours;
+    std::vector<cv::Vec4i> hierarchy;
+    cv::findContours(dilation_dst, contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
+    std::vector<cv::Rect> contour_rect;
+
+    // get bounding box of contours
+    for (size_t idx = 0; idx < contours.size(); idx++) {
+        cv::Rect rect = cv::boundingRect(contours[idx]);
+
+        // check intersection of curret rectangle with other present rectangle
+        std::vector<cv::Rect>::iterator it = std::find_if(contour_rect.begin(), contour_rect.end(),
+                                                          [=] (const cv::Rect & cRect) { return rectangleHasIntersection(cRect,rect); } );
+        
+        // if curretn rectangle does not have intersection with other rectangles just add it
+        if(it == contour_rect.end()){
+            contour_rect.push_back(rect);
+        }
+        // if current rectangle has an intersection with other rectangles
+        else {
+            cv::Rect iRect = (*it);
+
+            // if the intersection is exactly rectangle in vector that mean that rect contains the rectangle in vector
+            if ( iRect == (iRect & rect) ) {
+                (*it) = rect;
+            }
+            // if the intersection is exactly current rectangle that means that that the rectangle in vector contains rect contain
+            else if ( rect == (iRect & rect) ){
+                continue;
+            }
+            else {
+                contour_rect.push_back(rect);
+            }
+
+        }
+        
+        // Draw the contours rectangle
+        cv::drawContours( img, contours, idx, cv::Scalar(0, 0, 255), 1, 8, hierarchy, 0);
+        //cv::rectangle(img, rect.tl(), rect.br(), cv::Scalar(255, 0, 0));
+    }
+
+    for (size_t idx = 0; idx < contour_rect.size(); idx++) {
+        
+        // Draw the contours rectangle
+        cv::rectangle(img, contour_rect[idx].tl(), contour_rect[idx].br(), cv::Scalar(255, 0, 0));
+    }
+    
+    cv::imshow("imageDest",src_gray_thr);
+    cv::imshow("dilation_dst",dilation_dst);
+    cv::imshow("img",img);
+}
+
+
+void ImageAnalyzer::getTextFrameRect(const cv::Mat & imageQuranPage, cv::Rect & textFrame) {
+    cv::Mat src_gray_thr;
+    cv::cvtColor(imageQuranPage, src_gray_thr, cv::COLOR_BGR2GRAY);
+    cv::threshold( src_gray_thr, src_gray_thr, 240, 255, cv::THRESH_BINARY);
+
+    // for src image determine contours then find max area contour and the associated bounding rectangle
+    std::vector<std::vector<cv::Point> > contours;
+    std::vector<cv::Vec4i> hierarchy;
+    std::vector<std::vector<cv::Point> >::const_iterator result;
+
+    cv::findContours(src_gray_thr, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
+    result = std::max_element(contours.begin(), contours.end(), utils::comp);
+    textFrame = cv::boundingRect((*result));
+}
+
+*/

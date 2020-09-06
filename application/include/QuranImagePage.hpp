@@ -31,6 +31,8 @@ public:
     bool hasRoubou3(cv::Rect &bounding_rect);
     bool hasAyah(std::vector<cv::Rect> &bounding_rects);
 
+    bool segmentWordInPage();
+
     
 private:
     bool matchOne(cv::Rect &bounding_rect, std::string template_file_name, double threshold = 0.8, int match_method = cv::TM_CCOEFF_NORMED);
